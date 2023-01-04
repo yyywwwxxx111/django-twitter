@@ -4,7 +4,6 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
 from django.contrib.auth import (
     authenticate as django_authenticate,
     login as django_login,
@@ -13,6 +12,8 @@ from django.contrib.auth import (
 from accounts.api.serializers import SignupSerializer, LoginSerializer
 
 
+# serializer.data 是serialize.instance的序列化结果
+# Serializer(instance=序列化,后端给前端，变成jason格式, data=反序列化, 查看请求的数据, 前端给后端)
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -71,18 +72,17 @@ class AccountViewSet(viewsets.ViewSet):
     @action(methods=['POST'], detail=False)
     def signup(self, request):
         serializer = SignupSerializer(data=request.data)
+        # 返回一个boolean值, 所有字段均通过才返回True, serializer.validated_data serializer.errors
         if not serializer.is_valid():
             return Response({
                 'success': False,
                 'message': "Please check input",
                 'errors': serializer.errors,
             }, status=400)
-
+        # save(): 还是需要create,需要重写create
         user = serializer.save()
         django_login(request, user)
         return Response({
             'success': True,
             'user': UserSerializer(user).data,
         })
-
-
