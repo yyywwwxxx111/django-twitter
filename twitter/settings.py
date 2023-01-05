@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'tweets',
     'accounts',
+    'friendships',
+
 
 ]
 
