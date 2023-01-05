@@ -16,7 +16,7 @@ class AccountApiTests(TestCase):
         self.user = self.create_user(
             username='admin',
             email='admin@ywx.com',
-            password='correct password',
+            password='yuwenxiang',
         )
 
     def test_login(self):
@@ -42,11 +42,11 @@ class AccountApiTests(TestCase):
         # 用正确的密码
         response = self.client.post(LOGIN_URL, {
             'username': self.user.username,
-            'password': 'correct password',
+            'password': 'yuwenxiang',
         })
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.data['user'], None)
-        self.assertEqual(response.data['user']['email'], 'admin@jiuzhang.com')
+        self.assertEqual(response.data['user']['email'], 'admin@ywx.com')
         # 验证已经登录了
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
@@ -55,7 +55,7 @@ class AccountApiTests(TestCase):
         # 先登录
         self.client.post(LOGIN_URL, {
             'username': self.user.username,
-            'password': 'correct password',
+            'password': 'yuwenxiang',
         })
         # 验证用户已经登录
         response = self.client.get(LOGIN_STATUS_URL)
@@ -75,7 +75,7 @@ class AccountApiTests(TestCase):
     def test_signup(self):
         data = {
             'username': 'someone',
-            'email': 'someone@jiuzhang.com',
+            'email': 'someone@ywx.com',
             'password': 'any password',
         }
         # 测试 get 请求失败
@@ -111,7 +111,7 @@ class AccountApiTests(TestCase):
 
         # 成功注册
         response = self.client.post(SIGNUP_URL, data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['user']['username'], 'someone')
         # 验证用户已经登入
         response = self.client.get(LOGIN_STATUS_URL)
