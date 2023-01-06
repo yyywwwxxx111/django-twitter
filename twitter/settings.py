@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'tweets',
     'accounts',
     'friendships',
+    'newsfeeds'
 
 
 ]
