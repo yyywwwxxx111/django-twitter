@@ -20,7 +20,7 @@ ViewSet: 继承ViewSetMixin和APIView，允许更改路由，允许合并两个v
 GenericViewSet：GenericAPIView + ViewSetMixin
 ModelViewSet: 完成增删查改逻辑，集大成者 GenericViewSet + mixin
               只写两行
-              serializer_class = xSerializer
+              serializer_class = xSerializer UI界面测试时基于哪个表单渲染
               queryset = x.objects.all()
               完成所有功能(create, list...)
 目前的路由已经实现路由重新分发(get->list.....)
