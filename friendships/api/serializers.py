@@ -45,6 +45,7 @@ class FriendshipSerializerForCreate(serializers.ModelSerializer):
 # 即 model_instance.xxx 来获得数据
 # https://www.django-rest-framework.org/api-guide/serializers/#specifying-fields-explicitly
 class FollowerSerializer(serializers.ModelSerializer):
+    # source: 用user代替from_user
     user = UserSerializerForFriendShip(source='from_user')
 
     class Meta:

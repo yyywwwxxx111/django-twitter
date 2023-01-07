@@ -11,6 +11,10 @@ FOLLOWINGS_URL = '/api/friendships/{}/followings/'
 
 class FriendshipApiTests(TestCase):
 
+    @property
+    def anonymous_client(self):
+        return self._anonymous_client
+
     def setUp(self):
         self.anonymous_client = APIClient()
 
@@ -135,3 +139,7 @@ class FriendshipApiTests(TestCase):
             response.data['followers'][1]['user']['username'],
             'dongxie_follower0',
         )
+
+    @anonymous_client.setter
+    def anonymous_client(self, value):
+        self._anonymous_client = value
