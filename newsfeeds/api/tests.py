@@ -21,12 +21,6 @@ class NewsFeedApiTests(TestCase):
         self.dongxie_client.force_authenticate(self.dongxie)
 
         # create followings and followers for dongxie
-        for i in range(2):
-            follower = self.create_user('dongxie_follower{}'.format(i))
-            Friendship.objects.create(from_user=follower, to_user=self.dongxie)
-        for i in range(3):
-            following = self.create_user('dongxie_following{}'.format(i))
-            Friendship.objects.create(from_user=self.dongxie, to_user=following)
 
     def test_list(self):
         # 需要登录
