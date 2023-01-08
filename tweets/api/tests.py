@@ -2,32 +2,28 @@ from rest_framework.test import APIClient
 from testing.testcases import TestCase
 from tweets.models import Tweet
 
+
 # 注意要加 '/' 结尾，要不然会产生 301 redirect
 TWEET_LIST_API = '/api/tweets/'
 TWEET_CREATE_API = '/api/tweets/'
+TWEET_RETRIEVE_API = '/api/tweets/{}/'
 
 
 class TweetApiTests(TestCase):
 
-    @property
-    def anonymous_client(self):
-        return self._anonymous_client
-
     def setUp(self):
-        self.anonymous_client = APIClient()
-
-        self.user1 = self.create_user('user1', 'user1@ywx.com')
+        self.user1 = self.create_user('user1', 'user1@jiuzhang.com')
         self.tweets1 = [
             self.create_tweet(self.user1)
-            for _ in range(3)
+            for i in range(3)
         ]
         self.user1_client = APIClient()
         self.user1_client.force_authenticate(self.user1)
 
-        self.user2 = self.create_user('user2', 'user2@ywx.com')
+        self.user2 = self.create_user('user2', 'user2@jiuzhang.com')
         self.tweets2 = [
             self.create_tweet(self.user2)
-            for _ in range(2)
+            for i in range(2)
         ]
 
     def test_list_api(self):
@@ -71,6 +67,21 @@ class TweetApiTests(TestCase):
         self.assertEqual(response.data['user']['id'], self.user1.id)
         self.assertEqual(Tweet.objects.count(), tweets_count + 1)
 
-    @anonymous_client.setter
-    def anonymous_client(self, value):
-        self._anonymous_client = value
+    def test_retrieve(self):
+        # tweet with id=-1 does not exist
+        url = TWEET_RETRIEVE_API.format(-1)
+        response = self.anonymous_client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        # 获取某个 tweet 的时候会一起把 comments 也拿下
+        tweet = self.create_tweet(self.user1)
+        url = TWEET_RETRIEVE_API.format(tweet.id)
+        response = self.anonymous_client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['comments']), 0)
+
+        self.create_comment(self.user2, tweet, 'hhhhhhhhh')
+        self.create_comment(self.user1, tweet, 'hmm...')
+        self.create_comment(self.user1, self.create_tweet(self.user2), '...')
+        response = self.anonymous_client.get(url)
+        self.assertEqual(len(response.data['comments']), 2)
