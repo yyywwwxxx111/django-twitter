@@ -35,4 +35,7 @@ serializers.Serializer: view里serializer.is_valid()方法构建两个变量
                         update()/create()会创建self.instance, 返回值是self.instance
                         serializer.data是serializer.instance的序列化结果
 serializers.ModelSerializer: class Meta里的 model = x模型 就是针对模型x做序列化, 自动实现create()和update()
+---------------------------------------------------------------------------------------------------------
+utils:跨工程
+service:当前app
 """
