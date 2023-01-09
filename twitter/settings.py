@@ -40,9 +40,10 @@ INSTALLED_APPS = [
 
     # third party packages
     'rest_framework',
+    'notifications',
     'debug_toolbar',
     'django_filters',
-    'notifications',
+
 
     # project apps
     'tweets',
