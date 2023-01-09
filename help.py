@@ -14,7 +14,7 @@ GenericAPIView: 继承APIView 提供四个内置方法
 Mixin: 完成增删查改逻辑，create，list...
 GenericAPIView搭配Mixin使用
 
-ViewSetMixin：重塑分发机制 允许自己更改路由，比如 get->list, post->create
+ViewSetMixin：重塑分发机制 允许自己更改路由，比如 get->list, post->404create
 ViewSet: 继承ViewSetMixin和APIView，允许更改路由，允许合并两个view类(带id和不带id)
 
 GenericViewSet：GenericAPIView + ViewSetMixin
