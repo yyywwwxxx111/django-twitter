@@ -1,3 +1,4 @@
+from accounts.models import UserProfile
 from rest_framework.test import APIClient
 from testing.testcases import TestCase
 
@@ -15,8 +16,8 @@ class AccountApiTests(TestCase):
         self.client = APIClient()
         self.user = self.create_user(
             username='admin',
-            email='admin@ywx.com',
-            password='yuwenxiang',
+            email='admin@jiuzhang.com',
+            password='correct password',
         )
 
     def test_login(self):
@@ -42,11 +43,11 @@ class AccountApiTests(TestCase):
         # 用正确的密码
         response = self.client.post(LOGIN_URL, {
             'username': self.user.username,
-            'password': 'yuwenxiang',
+            'password': 'correct password',
         })
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.data['user'], None)
-        self.assertEqual(response.data['user']['email'], 'admin@ywx.com')
+        self.assertEqual(response.data['user']['email'], 'admin@jiuzhang.com')
         # 验证已经登录了
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
@@ -55,7 +56,7 @@ class AccountApiTests(TestCase):
         # 先登录
         self.client.post(LOGIN_URL, {
             'username': self.user.username,
-            'password': 'yuwenxiang',
+            'password': 'correct password',
         })
         # 验证用户已经登录
         response = self.client.get(LOGIN_STATUS_URL)
@@ -75,7 +76,7 @@ class AccountApiTests(TestCase):
     def test_signup(self):
         data = {
             'username': 'someone',
-            'email': 'someone@ywx.com',
+            'email': 'someone@jiuzhang.com',
             'password': 'any password',
         }
         # 测试 get 请求失败
@@ -111,8 +112,12 @@ class AccountApiTests(TestCase):
 
         # 成功注册
         response = self.client.post(SIGNUP_URL, data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['user']['username'], 'someone')
+        # 验证 user profile 已经被创建
+        created_user_id = response.data['user']['id']
+        profile = UserProfile.objects.filter(user_id=created_user_id).first()
+        self.assertNotEqual(profile, None)
         # 验证用户已经登入
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
