@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'notifications',
     'debug_toolbar',
     'django_filters',
-
 
     # project apps
     'tweets',
@@ -145,6 +144,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# # 设置存储用户上传文件的 storage 用什么系统
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# TESTING = ((" ".join(sys.argv)).find('manage.py test') != -1)
+# if TESTING:
+#     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+#
+# # 当用s3boto3 作为用户上传文件存储时，需要按照你在 AWS 上创建的配置来设置你的 BUCKET_NAME
+# # 和 REGION_NAME，这个值你可以改成你自己创建的 bucket 的名字和所在的 region
+# AWS_STORAGE_BUCKET_NAME = 'django-twitter'
+# AWS_S3_REGION_NAME = 'us-east-1'
+#
+# # media 的作用适用于存放被用户上传的文件信息
+# # 当我们使用默认 FileSystemStorage 作为 DEFAULT_FILE_STORAGE 的时候
+# # 文件会被默认上传到 MEDIA_ROOT 指定的目录下
+# # media 和 static 的区别是：
+# # - static 里通常是 css,js 文件之类的静态代码文件，是用户可以直接访问的代码文件
+# # - media 里使用户上传的数据文件，而不是代码
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+
 
 try:
     from .local_settings import *
