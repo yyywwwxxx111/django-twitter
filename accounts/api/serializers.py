@@ -1,33 +1,43 @@
-from django.contrib.auth.models import User, Group
+from accounts.models import UserProfile
+from django.contrib.auth.models import User
 from rest_framework import serializers, exceptions
 
 
-# return style and validation
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ('id', 'username')
 
 
-class UserSerializerForTweet(serializers.ModelSerializer):
+class UserSerializerWithProfile(UserSerializer):
+    # user.profile.nickname
+    nickname = serializers.CharField(source='profile.nickname')
+    avatar_url = serializers.SerializerMethodField()
+
+    def get_avatar_url(self, obj):
+        if obj.profile.avatar:
+            return obj.profile.avatar.url
+        return None
+
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ('id', 'username', 'nickname', 'avatar_url')
 
 
-class UserSerializerForFriendShip(UserSerializerForTweet):
+class UserSerializerForTweet(UserSerializerWithProfile):
     pass
 
 
-class UserSerializerForComment(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email']
+class UserSerializerForComment(UserSerializerWithProfile):
+    pass
 
 
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
+class UserSerializerForFriendship(UserSerializerWithProfile):
+    pass
+
+
+class UserSerializerForLike(UserSerializerWithProfile):
+    pass
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -40,10 +50,10 @@ class SignupSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'password')
 
     def validate(self, data):
-        # TODO 增加验证 username 是不是只由给定的字符集合构成
+        # TODO<HOMEWORK> 增加验证 username 是不是只由给定的字符集合构成
         if User.objects.filter(username=data['username'].lower()).exists():
             raise exceptions.ValidationError({
-                'message': 'This username has been occupied.'
+                'message': 'This email address has been occupied.'
             })
         if User.objects.filter(email=data['email'].lower()).exists():
             raise exceptions.ValidationError({
@@ -61,6 +71,15 @@ class SignupSerializer(serializers.ModelSerializer):
             email=email,
             password=password,
         )
-        # Create Userprofile object
-        user.profile
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+
+class UserProfileSerializerForUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('nickname', 'avatar')
