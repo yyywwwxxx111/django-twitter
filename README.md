@@ -1,4 +1,4 @@
-# django-twitter
+# django_twitter
 Implement twitter backend system by Django, MySQL, Redis. <br>
 Used push model to fanout news feeds.<br>
 Used Redis to cache all tweets and feeds.<br>
